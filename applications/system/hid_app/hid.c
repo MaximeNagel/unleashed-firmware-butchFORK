@@ -5,12 +5,20 @@
 #include <notification/notification_messages.h>
 #include <dolphin/dolphin.h>
 #include <flipper_format/flipper_format.h>
+#include <furi_hal_usb_hid.h>
 
 #define TAG "HidApp"
 
 #define HID_BT_CFG_PATH      APP_DATA_PATH(".bt_hid.cfg")
 #define HID_BT_CFG_FILE_TYPE "Flipper BT Remote Settings File"
 #define HID_BT_CFG_VERSION   1
+
+static FuriHalUsbHidConfig hid_usb_logitech_cfg = {
+    .vid = HID_VID_DEFAULT,
+    .pid = HID_PID_DEFAULT,
+    .manuf = "Logitech (x64)",
+    .product = "Logitech USB Input Device",
+};
 
 bool hid_custom_event_callback(void* context, uint32_t event) {
     furi_assert(context);
@@ -294,7 +302,7 @@ int32_t hid_usb_app(void* p) {
 
     FuriHalUsbInterface* usb_mode_prev = furi_hal_usb_get_config();
     furi_hal_usb_unlock();
-    furi_check(furi_hal_usb_set_config(&usb_hid, NULL) == true);
+    furi_check(furi_hal_usb_set_config(&usb_hid, &hid_usb_logitech_cfg) == true);
 
     dolphin_deed(DolphinDeedPluginStart);
 
